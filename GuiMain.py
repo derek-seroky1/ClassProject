@@ -198,6 +198,7 @@ class Gameboard(wx.Panel):
 
         else:
             print(self.boardTiles[newPos])
+            print newPos
             self.boardTiles[newPos].SelectPlayer([player])
 
 
@@ -318,8 +319,6 @@ class Gameboard(wx.Panel):
 
         panLftCen.SetSizer(szLftCen)
         szMain.Add(panLftCen, (height / 2, 1), flag=wx.ALIGN_CENTER)
-        self.boardTiles.append(spoke + [cenPan])
-
 
         #Bottom
         tColor = ['white', 'gray', 'red', 'gray', 'green']
@@ -342,8 +341,8 @@ class Gameboard(wx.Panel):
 
         #Adding spokes to list
         isp = 2
-        isp2 = 7
-        isp3 = 12
+        isp2 = 12
+        isp3 = 7
         isp4 = 17
 
         spoke.insert(0, self.boardTiles[isp])
@@ -405,8 +404,8 @@ class PanelScoreboard(wx.Panel):
         szPlayer = wx.BoxSizer(wx.HORIZONTAL)
 
         dicPlayers = []
-        for ii in range(playerNames):
-            dicPlayers[ii] = PanelPlayer(self, playerNames[ii], catColors)
+        for ii in range(len(playerNames)):
+            dicPlayers.append(PanelPlayer(self, playerNames[ii], catColors))
             szPlayer.Add(dicPlayers[ii], 1, wx.EXPAND)
 
         self.dicPlayers = dicPlayers

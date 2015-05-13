@@ -37,3 +37,7 @@ class Player(object):
 
     def receiveWedge(self, color):
         self._gamePiece.getWedge(color)
+
+    def setInSpoke(self, bool):
+        self._inSpoke = bool
+        return

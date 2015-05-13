@@ -20,6 +20,7 @@ class GameController:
 
     def __init__(self):
         self.gameId = uuid.uuid4()
+        self.hubList = [2, 7, 12, 17]
         self.questionManager = QuestionManager.QuestionManager()
         app = wx.PySimpleApp()
         self.frameMain = FrameMain("Hello")
@@ -50,22 +51,32 @@ class GameController:
         dicer.Destroy()
         rollResult = roll[0] + roll[1]
         currentPosition = self.currentPlayer.getCurrentPosition()
-        if currentPosition == any([2, 7, 12, 17]):
-            getOnSpoke = wx.MessageDialog(None, "Go Up Spoke?")
+        if currentPosition in self.hubList:
+            getOnSpoke = DialogQuestion("Go Up Spoke?", ["Yes", "No"])
             if getOnSpoke.ShowModal() == wx.ID_OK:
                 val = getOnSpoke.getSelection()
             getOnSpoke.Destroy()
-
+            if val == 0:
+                self.currentPlayer.setInSpoke(True)
 
         if not self.currentPlayer.inSpoke():
-            newPosition = currentPosition + rollResult
-            if newPosition == any([2, 7, 12, 17]):
-                self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPosition, newPosition % 20)
-                self.currentPlayer.setCurrentPosition(newPosition % 20)  # since there are 20 items in the main gameboard
+            newPosition = (currentPosition + rollResult) % 20
+            if newPosition in self.hubList:
+                newPositionGUI = [newPosition, 0]
+                self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPosition, newPositionGUI)
+            else:
+                self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPosition, newPosition)
+            self.currentPlayer.setCurrentPosition(newPosition)  # since there are 20 items in the main gameboard
         else:
             # ToDO add the logic if you are in the spoke.
-            return
+            if rollResult > 5:
+                rollResult = 4
+            newPosition = rollResult % 5
+            newPositionGUI = [currentPosition, newPosition]
+            currentPositionGui = [currentPosition, 0]
+            self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPositionGui, newPositionGUI)
         color = self.gameBoard.getColor(newPosition)  # ToDo add logic for in spoke
+        print color
         if color != "RollAgain":
             self.executeQuestionPhase(color)
         else:
@@ -78,13 +89,13 @@ class GameController:
         return
 
     def correctLogic(self, color):
-        if "hub" in color:
+        if str.find(color, "Hub") == True:
             isColorHub = True
         else:
             isColorHub = False
         if isColorHub:
             self.currentPlayer.receiveWedge(color)
-            self.frameMain.gameboard.scoreboard.AwardCake(self.players.index(self.currentPlayer),color)
+            self.frameMain.gameboard.scoreboard.AwardCake(self.players.index(self.currentPlayer), color)
         self.currentPlayer.finalizeTurn()
         self.executeCurrentPlayersTurn()
         return
@@ -101,7 +112,7 @@ class GameController:
                 choice = True
             else:
                 choice = False
-        if answer == choice:
+        if answer == str(choice):
             self.correctLogic(color)
             self.checkForWinner()
         else:
