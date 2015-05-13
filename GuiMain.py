@@ -8,7 +8,7 @@
 import wx
 import random
 
-#Globals for test purposes
+# Globals for test purposes
 VERSION = '1.0'
 COLORS = ['RED', 'WHITE', 'BLUE', 'GREEN']
 PLAYERS = ['Player 1', 'Player 2', 'Player 3', 'Player 4']
@@ -521,7 +521,7 @@ class PanelPlayer(wx.Panel):
         lblPlayer = wx.StaticText(self, label=owner)
         lblQuestion = wx.StaticText(self, -1, 'Questions attempted: ')
         szGroup = self.GroupScore(catColors)
-        cakePan = PanelTile(self, 'white', catColors, (10, 10))
+        cakePan = PanelTile(self, (100, 160, 100, 150), catColors, (10, 10))
 
         szMain.Add(lblPlayer, 1, wx.EXPAND)
         szMain.Add(lblQuestion, 1, wx.EXPAND)
@@ -560,7 +560,9 @@ class PanelPlayer(wx.Panel):
             Description: toggles panel to shhow cake pieces
             ins: category - question category
         '''
-        self.cakePan.SelectPlayer([category])
+        colorDic = {'red': 0, 'white': 1, 'blue': 2, 'green': 3}
+        idc = colorDic[category]
+        self.cakePan.SelectPlayer([idc])
 
     def UpdateScore(self, category, answerCorrectly, totalAnswered):
         '''

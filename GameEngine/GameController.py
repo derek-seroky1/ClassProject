@@ -65,7 +65,11 @@ class GameController:
                 newPositionGUI = [newPosition, 0]
                 self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPosition, newPositionGUI)
             else:
-                self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPosition, newPosition)
+                try:
+                    self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPosition, newPosition)
+                except AttributeError:
+                    currentPositionGui = [currentPosition, 0]
+                    self.frameMain.gameboard.MovePlayer(self.players.index(self.currentPlayer), currentPositionGui, newPosition)
             self.currentPlayer.setCurrentPosition(newPosition)  # since there are 20 items in the main gameboard
         else:
             # ToDO add the logic if you are in the spoke.
@@ -86,16 +90,19 @@ class GameController:
         return
 
     def checkForWinner(self):
+        if self.currentPlayer._possibleWinCondition == True:
+            self.winner = self.currentPlayer
         return
 
     def correctLogic(self, color):
-        if str.find(color, "Hub") == True:
+        if str.find(color, "Hub") != -1:
             isColorHub = True
+            color = str.replace(color, "Hub", "")
         else:
             isColorHub = False
         if isColorHub:
             self.currentPlayer.receiveWedge(color)
-            self.frameMain.gameboard.scoreboard.AwardCake(self.players.index(self.currentPlayer), color)
+            self.frameMain.gameboard.scoreboard.AwardCake(self.players.index(self.currentPlayer), color.lower())
         self.currentPlayer.finalizeTurn()
         self.executeCurrentPlayersTurn()
         return

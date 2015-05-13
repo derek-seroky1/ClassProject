@@ -13,6 +13,10 @@ class GamePiece(object):
             self.wedges.append(categoryName)
         else:
             print("You already have that wedge!")
+        if len(self.wedges) == 4:
+            return True
+        else:
+            return False
 
 
 #
